@@ -17,7 +17,7 @@ setup(
     keywords = "astronomy",
     url = "https://github.com/lauracabayol/MTL_photozs",
     license="GPLv3",
-    packages=['lumos'],
+    packages=['MTL_photozs'],
     install_requires=['numpy', 'pandas', 'torch', 'astropy', 'scipy', 'scikit-image'],
     long_description=read('README.md'),
     classifiers=[
