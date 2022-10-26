@@ -12,20 +12,33 @@ import os
 from torch import nn, optim
 from torch.optim import lr_scheduler
 from .network import Network_mtl
+from .network_flagship import Network_mtl_flagship
+
+from torch.utils.data import DataLoader, dataset, TensorDataset
 
 class mtl_photoz:
     """Interface for photometry prection using neural networks."""
     
     # Here we estimate photometry on CPUs. This should be much
     # simpler to integrate and sufficiently fast.
-    def __init__(self, zs=True, zs_NB=False, zs_zb=False, zs_NB_zb=False):
+    def __init__(self, zs=True, zs_NB=False, zs_zb=False, zs_NB_zb=False, flagship =False):
              
         self.zs = zs 
         self.zs_NB = zs_NB
         self.zs_zb = zs_zb
         self.zs_NB_zb = zs_NB_zb
         
+        self.NB_list = ['NB%s'%nb for nb in np.arange(455,855,10)]
+        self.BB_list = ['Umag','Bmag','Vmag','Rmag','ICmag','Zmag']
+        
+        
+
+        
         self.net = Network_mtl().cuda()
+        
+        if flagship == True: 
+            self.net = Network_mtl_flagship().cuda()
+            self.BB_list = ['U','G','R','I','ZN','H','J','Y']
         
         if self.zs: self.w = 0
         if self.zs_NB: self.w = 1
@@ -33,20 +46,17 @@ class mtl_photoz:
         if self.zs_NB_zb: self.w = 1
         
     def create_loader(self,dfbb,dfnb,cuts = 6):
-
-        catalog_nb = dfnb[dfnb.index.isin(dfbb.paudm_id)]
-        catalog_nb = 26-2.5*np.log10(catalog_nb)
         
-        samps_BB_spec =  catalog_training[BB_list].values
-        samps_NB_spec =  catalog_nb_train[NB_list].values
+        samps_BB_spec =  dfbb[self.BB_list].values
+        samps_NB_spec =  dfnb[self.NB_list].values
 
         samps_BB_colors_spec = samps_BB_spec[:,:-1] - samps_BB_spec[:,1:]
         samps_NB_colors_spec = samps_NB_spec[:,:-1] - samps_NB_spec[:,1:]
         
-        if self.zs: zb_spec = catalog_training.target_zs.values
-        if self.zs_NB: zb_spec = catalog_training.target_zs.values
-        if self.zs_zb: zb_spec = catalog_training.target_zb.values
-        if self.zs_NB_zb: zb_spec = catalog_training.target_zb.values
+        if self.zs: zb_spec = dfbb.target_zs.values
+        if self.zs_NB: zb_spec = dfbb.target_zs.values
+        if self.zs_zb: zb_spec = dfbb.target_zb.values
+        if self.zs_NB_zb: zb_spec = dfbb.target_zb.values
         
         field = zb_spec.copy()
         field = np.where(field== 0,0,1)
@@ -66,10 +76,10 @@ class mtl_photoz:
     
         for epoch in range(epochs):
 
-            for BB_flux, NB_flux_true, zb_true, field in loader_train:
+            for BB_flux, NB_flux_true, zb_true, field in loader:
                 optimizer.zero_grad() 
 
-                f, logalphas ,z,logzerr = net(BB_flux.cuda())
+                f, logalphas ,z,logzerr = self.net(BB_flux.cuda())
                 zerr = torch.exp(logzerr)
 
                 loss_z = logalphas - 0.5 * ((z - zb_true[:,None].cuda()) / zerr).pow(2) - logzerr
@@ -88,7 +98,7 @@ class mtl_photoz:
 
             scheduler.step()
 
-        return net
+        return self.net
     
     def eval_mtl(self,test_colors):
         

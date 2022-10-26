@@ -9,7 +9,7 @@ def read(fname):
 # using pip.
 
 setup(
-    name = "MTL_photozs",
+    name = "MTLphotozs",
     version = "1.0.0",
     author = "Laura Cabayol",
     author_email = "lcabayol@pic.es",
@@ -17,7 +17,7 @@ setup(
     keywords = "astronomy",
     url = "https://github.com/lauracabayol/MTL_photozs",
     license="GPLv3",
-    packages=['MTL_photozs'],
+    packages=['MTLphotozs'],
     install_requires=['numpy', 'pandas', 'torch', 'astropy', 'scipy', 'scikit-image'],
     long_description=read('README.md'),
     classifiers=[

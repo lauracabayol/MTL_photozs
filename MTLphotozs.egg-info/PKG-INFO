@@ -1,0 +1,18 @@
+Metadata-Version: 2.1
+Name: MTLphotozs
+Version: 1.0.0
+Summary: Photometric redshifts with multi-task learning.
+Home-page: https://github.com/lauracabayol/MTL_photozs
+Author: Laura Cabayol
+Author-email: lcabayol@pic.es
+License: GPLv3
+Keywords: astronomy
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Topic :: Astronomy
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+
+# MTL_photozs
+Photometric redshifts with multi-task learning
+
+

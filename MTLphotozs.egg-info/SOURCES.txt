@@ -1,0 +1,11 @@
+README.md
+setup.py
+MTLphotozs/__init__.py
+MTLphotozs/mtl_network.py
+MTLphotozs/network.py
+MTLphotozs/network_flagship.py
+MTLphotozs.egg-info/PKG-INFO
+MTLphotozs.egg-info/SOURCES.txt
+MTLphotozs.egg-info/dependency_links.txt
+MTLphotozs.egg-info/requires.txt
+MTLphotozs.egg-info/top_level.txt
