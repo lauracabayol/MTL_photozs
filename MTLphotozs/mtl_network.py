@@ -21,7 +21,7 @@ class mtl_photoz:
     
     # Here we estimate photometry on CPUs. This should be much
     # simpler to integrate and sufficiently fast.
-    def __init__(self, zs=True, zs_NB=False, zs_zb=False, zs_NB_zb=False, flagship =False):
+    def __init__(self, zs=True, zs_NB=False, zs_zb=False, zs_NB_zb=False, flagship =False, BB_list = ['Umag','Bmag','Vmag','Rmag','ICmag','Zmag']):
              
         self.zs = zs 
         self.zs_NB = zs_NB
@@ -29,16 +29,16 @@ class mtl_photoz:
         self.zs_NB_zb = zs_NB_zb
         
         self.NB_list = ['NB%s'%nb for nb in np.arange(455,855,10)]
-        self.BB_list = ['Umag','Bmag','Vmag','Rmag','ICmag','Zmag']
+        self.BB_list = BB_list
         
         
 
         
-        self.net = Network_mtl().cuda()
+        self.net = Network_mtl(len(BB_list)-1).cuda()
         
         if flagship == True: 
-            self.net = Network_mtl_flagship().cuda()
-            self.BB_list = ['U','G','R','I','ZN','H','J','Y']
+            self.net = Network_mtl(len(BB_list)-1).cuda()
+            self.BB_list = BB_list#['U','G','R','I','ZN','H','J','Y']
         
         if self.zs: self.w = 0
         if self.zs_NB: self.w = 1
